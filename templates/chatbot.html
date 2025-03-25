@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #10b981;
+            --secondary-color: #059669;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .chat-container {
+            min-height: 100vh;
+            background-color: rgba(243, 244, 246, 0.85);
+            background-image: url('https://img.freepik.com/free-vector/medical-healthcare-blue-color_53876-117857.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 1.5rem 2rem;
+        }
+
+        .message-container {
+            height: calc(100vh - 220px);
+        }
+
+        .user-message {
+            background-color: var(--primary-color);
+            border-radius: 1rem 1rem 0 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .ai-message {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem 1rem 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .typing-indicator {
+            display: inline-block;
+        }
+
+        .typing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            margin-right: 4px;
+            animation: typingAnimation 1.4s infinite both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+        }
+
+        .send-btn {
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: rgba(241, 241, 241, 0.5);
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.7);
+            border-radius: 3px;
+        }
+
+        .welcome-banner {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .welcome-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="chat-container">
+    <div class="max-w-6xl mx-auto flex flex-col h-screen">
+        <!-- Header -->
+        <div class="chat-header text-white">
+            <div class="flex items-center">
+                <a href="/" class="mr-6">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <i class="fas fa-heartbeat text-2xl mr-3"></i>
+                <div>
+                    <h1 class="text-2xl font-bold">Medical AI Assistant</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="message-container overflow-y-auto p-6 flex-grow scrollbar-thin" id="messageContainer">
+            <div class="welcome-banner">
+                <div class="welcome-title">Welcome to Medical AI Assistant</div>
+                <div class="welcome-text">Ask me anything about health, symptoms, medications, or general medical advice.</div>
+            </div>
+            
+            <div class="ai-message max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl p-4 mb-4">
+                Hello! I'm your medical AI assistant. I can help with health-related questions, symptom analysis, medication information, and general wellness advice. How can I assist you today?
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white bg-opacity-90 border-t border-gray-200">
+            <form id="chatForm" class="flex items-end space-x-2">
+                <div class="flex-grow relative">
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-input w-full border border-gray-300 rounded-lg p-3 pr-10 resize-none" 
+                        rows="1" 
+                        placeholder="Type your health question..."
+                    ></textarea>
+                    <button 
+                        type="button" 
+                        id="sendButton" 
+                        class="send-btn absolute right-2 bottom-2 bg-emerald-500 text-white p-2 rounded-lg"
+                    >
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+            <p class="text-xs text-gray-500 mt-2 text-center">
+                Note: This AI provides general health information only. For medical emergencies, please contact your healthcare provider.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            const messageContainer = document.getElementById('messageContainer');
+            const chatForm = document.getElementById('chatForm');
+
+            // Auto-resize textarea
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Send message on Enter (but allow Shift+Enter for new lines)
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);
+
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Add user message to chat
+                addMessage('user', message);
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+
+                // Show typing indicator
+                const typingId = addTypingIndicator();
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Remove typing indicator
+                    removeTypingIndicator(typingId);
+                    
+                    // Add AI response
+                    addMessage('ai', data.reply || "I couldn't process your request. Please try again.");
+                    
+                } catch (error) {
+                    removeTypingIndicator(typingId);
+                    addMessage('ai', "Sorry, I encountered an error. Please try again.");
+                    console.error('Error:', error);
+                }
+            }
+
+            function addMessage(sender, text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `${sender}-message max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl p-4 mb-4 ${sender === 'user' ? 'ml-auto text-white' : 'mr-auto'}`;
+                messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+                messageContainer.appendChild(messageDiv);
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const typingId = 'typing-' + Date.now();
+                const typingDiv = document.createElement('div');
+                typingDiv.id = typingId;
+                typingDiv.className = 'ai-message max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl p-4 mb-4 mr-auto';
+                typingDiv.innerHTML = `
+                    <div class="typing-indicator">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                `;
+                messageContainer.appendChild(typingDiv);
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+                return typingId;
+            }
+
+            function removeTypingIndicator(id) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

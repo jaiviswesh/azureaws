@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedicAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6366f1;
+            --doc-color: #2563eb;
+            --chat-color: #10b981;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-card {
+            transition: all 0.3s ease;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .doc-card::before {
+            background: linear-gradient(90deg, var(--doc-color), #1d4ed8);
+        }
+
+        .chat-card::before {
+            background: linear-gradient(90deg, var(--chat-color), #059669);
+        }
+
+        .btn {
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-doc {
+            background-color: var(--doc-color);
+        }
+
+        .btn-doc:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-chat {
+            background-color: var(--chat-color);
+        }
+
+        .btn-chat:hover {
+            background-color: #059669;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-icon {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--doc-color);
+        }
+
+        .chat-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--chat-color);
+        }
+    </style>
+</head>
+<body class="hero">
+    <!-- Header -->
+    <header class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-heartbeat text-2xl mr-2 text-blue-600"></i>
+                <h1 class="text-2xl font-bold text-gray-900">MedicAI</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Home</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">About</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center py-12">
+            <div class="mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Medical AI Tools</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Select between our medical document analyzer or healthcare chatbot to get started.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Document Summarizer Card -->
+                <div class="option-card doc-card bg-white p-8">
+                    <div class="feature-icon doc-icon">
+                        <i class="fas fa-file-medical text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Medical Document Analyzer</h3>
+                    <p class="text-gray-600 mb-6">
+                        Upload medical reports and get concise, accurate summaries generated by AI.
+                    </p>
+                    <ul class="text-left text-gray-600 mb-8 space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            Supports medical reports, research papers
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            Extracts key medical findings
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            HIPAA-compliant processing
+                        </li>
+                    </ul>
+                    <a href="/summarizer" class="btn btn-doc text-white py-3 px-8 rounded-lg inline-block">
+                        <i class="fas fa-arrow-right mr-2"></i> Go to Analyzer
+                    </a>
+                </div>
+
+                <!-- Chatbot Card -->
+                <div class="option-card chat-card bg-white p-8">
+                    <div class="feature-icon chat-icon">
+                        <i class="fas fa-comment-medical text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Medical Chatbot</h3>
+                    <p class="text-gray-600 mb-6">
+                        Get answers to your medical questions from our AI assistant.
+                    </p>
+                    <ul class="text-left text-gray-600 mb-8 space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>
+                            Symptom checking assistance
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>
+                            Medication information
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>
+                            General health advice
+                        </li>
+                    </ul>
+                    <a href="/chatbot" class="btn btn-chat text-white py-3 px-8 rounded-lg inline-block">
+                        <i class="fas fa-arrow-right mr-2"></i> Go to Chatbot
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 px-4 sm:px-6 lg:px-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-500 mb-4 md:mb-0">
+                © 2023 MedicAI. All rights reserved.
+            </p>
+            <div class="flex space-x-6">
+                <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-hospital"></i>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-stethoscope"></i>
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-pills"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // You can add any interactive elements here if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation for cards when they come into view
+            const cards = document.querySelectorAll('.option-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
