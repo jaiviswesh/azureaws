@@ -4,37 +4,40 @@ from flask import Flask, request, jsonify, render_template
 from azure.storage.blob import BlobServiceClient
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.core.credentials import AzureKeyCredential
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
 # Azure Configuration (Use environment variables for security)
-AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=stcbenu4cse2458241201957;AccountKey=JzG2XgHO+D5Bj34aBIvtn5MlPPknyopyDi3PtLIDkdv/FmTHsvibNEsUJUfBCydHr2/fMaB2HHL8+AStBjOOaw=="
-DOCUMENT_INTELLIGENCE_ENDPOINT = "https://intelligencedocument90.cognitiveservices.azure.com/"
-DOCUMENT_INTELLIGENCE_KEY = "1ofk0BGwSbUIAozylVgqwYV9RAPjbwYAdrZ8KG0i04APwP7Ia7XRJQQJ99BCACYeBjFXJ3w3AAALACOGiidc"
-AZURE_OPENAI_ENDPOINT = "https://ai-cbenu4cse223225825ai458241201957.cognitiveservices.azure.com/"
-AZURE_OPENAI_KEY = "7rhihjTf6pYPRSjInoVIecMLeNkLnuaur1MRbkxpLGXUDGWQDFHlJQQJ99BCACHYHv6XJ3w3AAAAACOG4G98"
+AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+DOCUMENT_INTELLIGENCE_ENDPOINT = os.getenv("DOCUMENT_INTELLIGENCE_ENDPOINT")
+DOCUMENT_INTELLIGENCE_KEY = os.getenv("DOCUMENT_INTELLIGENCE_KEY")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
 
 @app.route("/")
 def home():
-    return render_template("index.html")  # This template
+    return render_template("index.html")  
 
 @app.route("/summarizer")
 def summarizer():
-    return render_template("summarizer.html")  # Your existing summarizer UI
+    return render_template("summarizer.html")
 
 @app.route("/chatbot")
 def chatbot():
-    return render_template("chatbot.html")  # Your existing chat UI
+    return render_template("chatbot.html")  
 # Upload File to Azure Blob Storage
 def upload_file_to_blob(file_path, container_name="uploads"):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
     
-    # ✅ Ensure the container exists
     container_client = blob_service_client.get_container_client(container_name)
     try:
-        container_client.get_container_properties()  # Check if container exists
+        container_client.get_container_properties()  
     except:
-        container_client.create_container()  # Create container if it doesn't exist
+        container_client.create_container()  
 
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=os.path.basename(file_path))
     
@@ -44,7 +47,6 @@ def upload_file_to_blob(file_path, container_name="uploads"):
     return blob_client.url
 
 
-# Extract Text Using Azure Document Intelligence
 def extract_text(file_url):
     client = DocumentIntelligenceClient(DOCUMENT_INTELLIGENCE_ENDPOINT, AzureKeyCredential(DOCUMENT_INTELLIGENCE_KEY))
     poller = client.begin_analyze_document("prebuilt-read", {"urlSource": file_url})
@@ -53,7 +55,6 @@ def extract_text(file_url):
     text_content = "\n".join([line.content for page in result.pages for line in page.lines])
     return text_content
 
-# Summarize Text Using Azure OpenAI
 def summarize_text(text):
     headers = {"Authorization": f"Bearer {AZURE_OPENAI_KEY}", "Content-Type": "application/json"}
     data = {
