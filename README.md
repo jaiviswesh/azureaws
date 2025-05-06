@@ -1,4 +1,9 @@
-Following are the instructions on how to get the API keys for Azure OpenAI,Document intelligence services
+# **MedicAI - Website to Assist with medical queries**
+
+# Preview
+
+
+## How to get API key for Document Intelligence Service
 
 
 Step 1: Create a Document Intelligence Resource
@@ -26,7 +31,7 @@ Key 1 and Key 2 (either can be used).
 
 Endpoint URL (e.g., https://<your-region>.api.cognitive.microsoft.com/)
 
-Azure OpenAI API key
+## How to get Azure OpenAI API key
 
 Step 1: Sign in to ai.azure.com  
   Go to: https://ai.azure.com
