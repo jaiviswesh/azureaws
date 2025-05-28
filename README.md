@@ -2,6 +2,10 @@
 
 # Preview
 
+![image](https://github.com/user-attachments/assets/17cfe5c0-9237-4676-afd5-b0c2da90312f)
+
+![image](https://github.com/user-attachments/assets/1833dfc1-8049-4411-a218-775cd6fee910)
+
 
 ## How to get API key for Document Intelligence Service
 
