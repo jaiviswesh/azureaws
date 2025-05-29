@@ -5,6 +5,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
+from io import BytesIO  # Added for in-memory file handling
 
 # Load environment variables
 load_dotenv()
@@ -29,29 +30,24 @@ def summarizer():
 @app.route("/chatbot")
 def chatbot():
     return render_template("chatbot.html")  
-# Upload File to Azure Blob Storage
-def upload_file_to_blob(file_path, container_name="uploads"):
+
+# Upload File to Azure Blob Storage (now supports in-memory files)
+def upload_file_to_blob(file_stream, filename, container_name="uploads"):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
-    
     container_client = blob_service_client.get_container_client(container_name)
     try:
         container_client.get_container_properties()  
     except:
         container_client.create_container()  
 
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=os.path.basename(file_path))
-    
-    with open(file_path, "rb") as data:
-        blob_client.upload_blob(data, overwrite=True)
-    
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
+    blob_client.upload_blob(file_stream, overwrite=True)
     return blob_client.url
-
 
 def extract_text(file_url):
     client = DocumentIntelligenceClient(DOCUMENT_INTELLIGENCE_ENDPOINT, AzureKeyCredential(DOCUMENT_INTELLIGENCE_KEY))
     poller = client.begin_analyze_document("prebuilt-read", {"urlSource": file_url})
     result = poller.result()
-    
     text_content = "\n".join([line.content for page in result.pages for line in page.lines])
     return text_content
 
@@ -62,10 +58,9 @@ def summarize_text(text):
                      {"role": "user", "content": text}],
         "max_tokens": 500
     }
-    
-    
-    response = requests.post("https://ai-cbenu4cse223225825ai458241201957.cognitiveservices.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2025-01-01-preview", headers=headers, json=data)
+    response = requests.post(AZURE_OPENAI_ENDPOINT , headers=headers, json=data)
     return response.json()["choices"][0]["message"]["content"]
+
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
@@ -133,15 +128,16 @@ def upload_file():
     file = request.files['file']
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
-    
-    file_path = f"{file.filename}"
-    file.save(file_path)
-    file_url = upload_file_to_blob(file_path)
+
+    # Use in-memory file for blob upload
+    file_stream = BytesIO(file.read())
+    file_stream.seek(0)
+    file_url = upload_file_to_blob(file_stream, file.filename)
     extracted_text = extract_text(file_url)
     summary = summarize_text(extracted_text)
     
     return jsonify({"filename": file.filename, "summary": summary})
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
+# Remove the __main__ block for Vercel compatibility
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=5000)
