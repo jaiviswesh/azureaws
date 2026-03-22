@@ -18,6 +18,7 @@ DOCUMENT_INTELLIGENCE_ENDPOINT = os.getenv("DOCUMENT_INTELLIGENCE_ENDPOINT")
 DOCUMENT_INTELLIGENCE_KEY = os.getenv("DOCUMENT_INTELLIGENCE_KEY")
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
+x=os.getenv("x")
 
 @app.route("/")
 def home():
@@ -102,7 +103,7 @@ def chat():
 
     try:
         response = requests.post(
-            "https://ai-cbenu4cse223225825ai458241201957.cognitiveservices.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2025-01-01-preview",
+            x,
             headers=headers,
             json=payload
         )
